@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Private Business App</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:#000;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.app{
+    width:100%;
+    max-width:430px;
+}
+
+.card{
+    background:rgba(255,255,255,.12);
+    backdrop-filter:blur(15px);
+    border:1px solid rgba(255,255,255,.2);
+    border-radius:24px;
+    padding:28px 24px;
+    color:white;
+    box-shadow:0 20px 50px rgba(0,0,0,.4);
+}
+
+.screen{
+    display:none;
+}
+
+.screen.active{
+    display:block;
+}
+
+.logo{
+    width:70px;
+    height:70px;
+    margin:0 auto 15px;
+    border-radius:20px;
+    background:rgba(255,255,255,.15);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:34px;
+}
+
+h1{
+    text-align:center;
+    font-size:25px;
+    margin-bottom:8px;
+}
+
+.subtitle{
+    text-align:center;
+    color:#cbd5e1;
+    font-size:14px;
+    margin-bottom:22px;
+}
+
+label{
+    display:block;
+    margin:14px 0 7px;
+    font-size:14px;
+}
+
+input{
+    width:100%;
+    padding:14px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,.2);
+    background:rgba(255,255,255,.1);
+    color:white;
+    outline:none;
+    font-size:15px;
+}
+
+input::placeholder{
+    color:#cbd5e1;
+}
+
+button{
+    width:100%;
+    padding:14px;
+    margin-top:18px;
+    border:0;
+    border-radius:12px;
+    background:linear-gradient(90deg,#6366f1,#8b5cf6);
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button:active{
+    transform:scale(.98);
+}
+
+.secondary{
+    background:rgba(255,255,255,.12);
+}
+
+.message{
+    margin-top:14px;
+    padding:12px;
+    border-radius:10px;
+    text-align:center;
+    display:none;
+    font-size:14px;
+}
+
+.error{
+    background:rgba(239,68,68,.2);
+    color:#fecaca;
+}
+
+.success{
+    background:rgba(34,197,94,.2);
+    color:#bbf7d0;
+}
+
+.otp-box{
+    text-align:center;
+    padding:15px;
+    background:rgba(255,255,255,.08);
+    border-radius:12px;
+    margin-bottom:15px;
+}
+
+.otp{
+    font-size:26px;
+    font-weight:bold;
+    letter-spacing:6px;
+    margin-top:8px;
+    color:#a5b4fc;
+}
+
+.pending-icon{
+    text-align:center;
+    font-size:65px;
+    margin-bottom:15px;
+}
+
+.pending-text{
+    text-align:center;
+    color:#cbd5e1;
+    line-height:1.6;
+}
+
+.info{
+    background:rgba(255,255,255,.08);
+    border-radius:12px;
+    padding:15px;
+    margin-top:18px;
+}
+
+.info p{
+    margin:8px 0;
+    font-size:14px;
+    color:#cbd5e1;
+}
+
+.info strong{
+    color:white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- ==============================
+     EMPLOYEE REGISTRATION
+============================== -->
+
+<div class="card screen active" id="registerScreen">
+
+    <div class="logo">👨‍💼</div>
+
+    <h1>Employee Registration</h1>
+
+    <p class="subtitle">
+        Create your employee account
+    </p>
+
+    <form id="registerForm">
+
+        <label>Full Name</label>
+        <input
+            type="text"
+            id="name"
+            placeholder="Enter full name"
+            required
+        >
+
+        <label>Employee ID</label>
+        <input
+            type="text"
+            id="employeeId"
+            placeholder="Enter employee ID"
+            required
+        >
+
+        <label>Mobile Number</label>
+        <input
+            type="tel"
+            id="mobile"
+            maxlength="10"
+            placeholder="Enter 10 digit mobile number"
+            required
+        >
+
+        <label>Email</label>
+        <input
+            type="email"
+            id="email"
+            placeholder="Enter email address"
+            required
+        >
+
+        <label>Password</label>
+        <input
+            type="password"
+            id="password"
+            placeholder="Create password"
+            required
+        >
+
+        <button type="submit">
+            Create Account
+        </button>
+
+    </form>
+
+    <button
+        type="button"
+        class="secondary"
+        onclick="openAdminLogin()"
+    >
+        🔐 Admin Login
+    </button>
+
+    <div class="message error" id="registerError"></div>
+
+</div>
+
+
+<!-- ==============================
+     OTP
+============================== -->
+
+<div class="card screen" id="otpScreen">
+
+    <div class="logo">📱</div>
+
+    <h1>OTP Verification</h1>
+
+    <p class="subtitle">
+        Verify your mobile number
+    </p>
+
+    <div class="otp-box">
+        <div>Demo OTP</div>
+        <div class="otp">123456</div>
+    </div>
+
+    <label>Enter OTP</label>
+
+    <input
+        type="text"
+        id="otp"
+        maxlength="6"
+        placeholder="Enter OTP"
+    >
+
+    <button
+        type="button"
+        onclick="verifyOTP()"
+    >
+        Verify OTP
+    </button>
+
+    <button
+        type="button"
+        class="secondary"
+        onclick="showScreen('registerScreen')"
+    >
+        Back
+    </button>
+
+    <div class="message error" id="otpError"></div>
+
+</div>
+
+
+<!-- ==============================
+     PENDING APPROVAL
+============================== -->
+
+<div class="card screen" id="pendingScreen">
+
+    <div class="pending-icon">⏳</div>
+
+    <h1>Approval Pending</h1>
+
+    <p class="pending-text">
+        Your account has been created successfully.
+        <br><br>
+        Please wait for Admin Approval.
+    </p>
+
+    <div class="info">
+
+        <p>
+            Name:
+            <strong id="showName">-</strong>
+        </p>
+
+        <p>
+            Employee ID:
+            <strong id="showEmployeeId">-</strong>
+        </p>
+
+        <p>
+            Mobile:
+            <strong id="showMobile">-</strong>
+        </p>
+
+        <p>
+            Status:
+            <strong>Pending Approval</strong>
+        </p>
+
+    </div>
+
+    <button
+        type="button"
+        class="secondary"
+        onclick="openAdminLogin()"
+    >
+        🔐 Admin Login
+    </button>
+
+</div>
+
+
+<!-- ==============================
+     ADMIN LOGIN
+============================== -->
+
+<div class="card screen" id="adminLoginScreen">
+
+    <div class="logo">🔐</div>
+
+    <h1>Admin Login</h1>
+
+    <p class="subtitle">
+        Authorized Admin Only
+    </p>
+
+    <label>Admin ID</label>
+
+    <input
+        type="text"
+        id="adminId"
+        placeholder="Enter Admin ID"
+    >
+
+    <label>Admin Password</label>
+
+    <input
+        type="password"
+        id="adminPassword"
+        placeholder="Enter Admin Password"
+    >
+
+    <button
+        type="button"
+        onclick="adminLogin()"
+    >
+        Admin Login
+    </button>
+
+    <button
+        type="button"
+        class="secondary"
+        onclick="showScreen('registerScreen')"
+    >
+        Back
+    </button>
+
+    <div class="message error" id="adminError"></div>
+
+</div>
+
+
+<!-- ==============================
+     ADMIN DASHBOARD
+============================== -->
+
+<div class="card screen" id="adminDashboardScreen">
+
+    <div class="logo">👨‍💻</div>
+
+    <h1>Admin Dashboard</h1>
+
+    <p class="subtitle">
+        Employee Approval
+    </p>
+
+    <div class="info">
+
+        <p>
+            Name:
+            <strong id="adminName">-</strong>
+        </p>
+
+        <p>
+            Employee ID:
+            <strong id="adminEmployeeId">-</strong>
+        </p>
+
+        <p>
+            Mobile:
+            <strong id="adminMobile">-</strong>
+        </p>
+
+        <p>
+            Email:
+            <strong id="adminEmail">-</strong>
+        </p>
+
+        <p>
+            Status:
+            <strong id="adminStatus">-</strong>
+        </p>
+
+    </div>
+
+    <button
+        type="button"
+        onclick="approveEmployee()"
+    >
+        ✅ APPROVE EMPLOYEE
+    </button>
+
+    <button
+        type="button"
+        class="secondary"
+        onclick="rejectEmployee()"
+    >
+        ❌ REJECT EMPLOYEE
+    </button>
+
+    <div
+        class="message success"
+        id="adminSuccess"
+    ></div>
+
+    <button
+        type="button"
+        class="secondary"
+        onclick="openEmployeeLogin()"
+    >
+        👨‍💼 Employee Login
+    </button>
+
+</div>
+
+
+<!-- ==============================
+     EMPLOYEE LOGIN
+============================== -->
+
+<div class="card screen" id="employeeLoginScreen">
+
+    <div class="logo">👨‍💼</div>
+
+    <h1>Employee Login</h1>
+
+    <p class="subtitle">
+        Login to your account
+    </p>
+
+    <label>Employee ID</label>
+
+    <input
+        type="text"
+        id="loginId"
+        placeholder="Enter Employee ID"
+    >
+
+    <label>Password</label>
+
+    <input
+        type="password"
+        id="loginPassword"
+        placeholder="Enter Password"
+    >
+
+    <button
+        type="button"
+        onclick="employeeLogin()"
+    >
+        Login
+    </button>
+
+    <button
+        type="button"
+        class="secondary"
+        onclick="openAdminLogin()"
+    >
+        🔐 Admin Login
+    </button>
+
+    <div
+        class="message error"
+        id="loginError"
+    ></div>
+
+</div>
+
+
+<!-- ==============================
+     EMPLOYEE DASHBOARD
+============================== -->
+
+<div class="card screen" id="employeeDashboardScreen">
+
+    <div class="logo">📊</div>
+
+    <h1>Employee Dashboard</h1>
+
+    <p class="subtitle">
+        Welcome to Private Business App
+    </p>
+
+    <div class="info">
+
+        <p>
+            Employee:
+            <strong id="dashboardName">-</strong>
+        </p>
+
+        <p>
+            Employee ID:
+            <strong id="dashboardId">-</strong>
+        </p>
+
+        <p>
+            Status:
+            <strong>Approved ✅</strong>
+        </p>
+
+    </div>
+
+    <button
+        type="button"
+        onclick="alert('Add Customer module next step mein banega.')"
+    >
+        ➕ Add Customer
+    </button>
+
+    <button
+        type="button"
+        class="secondary"
+        onclick="logout()"
+    >
+        🚪 Logout
+    </button>
+
+</div>
+
+</div>
+
+
+<script>
+
+// =================================
+// GLOBAL EMPLOYEE DATA
+// =================================
+
+let employeeData = {};
+
+
+// =================================
+// SCREEN CHANGE
+// =================================
+
+function showScreen(id){
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(function(screen){
+
+            screen.classList.remove("active");
+
+        });
+
+    document
+        .getElementById(id)
+        .classList.add("active");
+}
+
+
+// =================================
+// ADMIN LOGIN OPEN
+// =================================
+
+function openAdminLogin(){
+
+    showScreen("adminLoginScreen");
+
+}
+
+
+// =================================
+// EMPLOYEE REGISTRATION
+// =================================
+
+document
+    .getElementById("registerForm")
+    .addEventListener("submit", function(e){
+
+        e.preventDefault();
+
+        const name =
+            document.getElementById("name").value.trim();
+
+        const employeeId =
+            document.getElementById("employeeId").value.trim();
+
+        const mobile =
+            document.getElementById("mobile").value.trim();
+
+        const email =
+            document.getElementById("email").value.trim();
+
+        const password =
+            document.getElementById("password").value;
+
+
+        if(!/^[0-9]{10}$/.test(mobile)){
+
+            showError(
+                "registerError",
+                "Enter valid 10 digit mobile number."
+            );
+
+            return;
+        }
+
+
+        if(password.length < 6){
+
+            showError(
+                "registerError",
+                "Password must be at least 6 characters."
+            );
+
+            return;
+        }
+
+
+        employeeData = {
+
+            name:name,
+            employeeId:employeeId,
+            mobile:mobile,
+            email:email,
+            password:password,
+            status:"Pending Approval"
+
+        };
+
+
+        localStorage.setItem(
+            "employeeData",
+            JSON.stringify(employeeData)
+        );
+
+
+        showScreen("otpScreen");
+
+    });
+
+
+// =================================
+// OTP
+// =================================
+
+function verifyOTP(){
+
+    const otp =
+        document.getElementById("otp").value.trim();
+
+
+    if(otp !== "123456"){
+
+        showError(
+            "otpError",
+            "Wrong OTP. Demo OTP is 123456."
+        );
+
+        return;
+    }
+
+
+    document.getElementById("showName")
+        .textContent = employeeData.name;
+
+    document.getElementById("showEmployeeId")
+        .textContent = employeeData.employeeId;
+
+    document.getElementById("showMobile")
+        .textContent = employeeData.mobile;
+
+
+    showScreen("pendingScreen");
+
+}
+
+
+// =================================
+// ADMIN LOGIN
+// =================================
+
+function adminLogin(){
+
+    const id =
+        document.getElementById("adminId").value.trim();
+
+    const password =
+        document.getElementById("adminPassword").value;
+
+
+    if(id === "admin" && password === "admin123"){
+
+        loadEmployee();
+
+        showScreen("adminDashboardScreen");
+
+    }
+    else{
+
+        showError(
+            "adminError",
+            "Wrong Admin ID or Password."
+        );
+
+    }
+
+}
+
+
+// =================================
+// LOAD EMPLOYEE
+// =================================
+
+function loadEmployee(){
+
+    const data =
+        localStorage.getItem("employeeData");
+
+
+    if(!data){
+
+        document.getElementById("adminName")
+            .textContent = "No employee";
+
+        document.getElementById("adminEmployeeId")
+            .textContent = "-";
+
+        document.getElementById("adminMobile")
+            .textContent = "-";
+
+        document.getElementById("adminEmail")
+            .textContent = "-";
+
+        document.getElementById("adminStatus")
+            .textContent = "-";
+
+        return;
+    }
+
+
+    employeeData = JSON.parse(data);
+
+
+    document.getElementById("adminName")
+        .textContent = employeeData.name;
+
+    document.getElementById("adminEmployeeId")
+        .textContent = employeeData.employeeId;
+
+    document.getElementById("adminMobile")
+        .textContent = employeeData.mobile;
+
+    document.getElementById("adminEmail")
+        .textContent = employeeData.email;
+
+    document.getElementById("adminStatus")
+        .textContent = employeeData.status;
+
+}
+
+
+// =================================
+// APPROVE
+// =================================
+
+function approveEmployee(){
+
+    const data =
+        localStorage.getItem("employeeData");
+
+
+    if(!data){
+
+        alert("No employee found.");
+
+        return;
+    }
+
+
+    employeeData = JSON.parse(data);
+
+    employeeData.status = "Approved";
+
+
+    localStorage.setItem(
+        "employeeData",
+        JSON.stringify(employeeData)
+    );
+
+
+    document.getElementById("adminStatus")
+        .textContent = "Approved";
+
+
+    document.getElementById("adminSuccess")
+        .textContent =
+        "Employee approved successfully!";
+
+    document.getElementById("adminSuccess")
+        .style.display = "block";
+
+}
+
+
+// =================================
+// REJECT
+// =================================
+
+function rejectEmployee(){
+
+    const data =
+        localStorage.getItem("employeeData");
+
+
+    if(!data){
+
+        alert("No employee found.");
+
+        return;
+    }
+
+
+    employeeData = JSON.parse(data);
+
+    employeeData.status = "Rejected";
+
+
+    localStorage.setItem(
+        "employeeData",
+        JSON.stringify(employeeData)
+    );
+
+
+    document.getElementById("adminStatus")
+        .textContent = "Rejected";
+
+
+    document.getElementById("adminSuccess")
+        .textContent =
+        "Employee rejected.";
+
+    document.getElementById("adminSuccess")
+        .style.display = "block";
+
+}
+
+
+// =================================
+// EMPLOYEE LOGIN OPEN
+// =================================
+
+function openEmployeeLogin(){
+
+    showScreen("employeeLoginScreen");
+
+}
+
+
+// =================================
+// EMPLOYEE LOGIN
+// =================================
+
+function employeeLogin(){
+
+    const id =
+        document.getElementById("loginId").value.trim();
+
+    const password =
+        document.getElementById("loginPassword").value;
+
+
+    const data =
+        localStorage.getItem("employeeData");
+
+
+    if(!data){
+
+        showError(
+            "loginError",
+            "Employee account not found."
+        );
+
+        return;
+    }
+
+
+    const employee =
+        JSON.parse(data);
+
+
+    if(id !== employee.employeeId){
+
+        showError(
+            "loginError",
+            "Wrong Employee ID."
+        );
+
+        return;
+    }
+
+
+    if(password !== employee.password){
+
+        showError(
+            "loginError",
+            "Wrong password."
+        );
+
+        return;
+    }
+
+
+    if(employee.status === "Pending Approval"){
+
+        showError(
+            "loginError",
+            "Admin approval is pending."
+        );
+
+        return;
+    }
+
+
+    if(employee.status === "Rejected"){
+
+        showError(
+            "loginError",
+            "Your account was rejected."
+        );
+
+        return;
+    }
+
+
+    if(employee.status === "Approved"){
+
+        document.getElementById("dashboardName")
+            .textContent = employee.name;
+
+        document.getElementById("dashboardId")
+            .textContent = employee.employeeId;
+
+        showScreen("employeeDashboardScreen");
+
+    }
+
+}
+
+
+// =================================
+// ERROR
+// =================================
+
+function showError(id,message){
+
+    const element =
+        document.getElementById(id);
+
+    element.textContent = message;
+
+    element.style.display = "block";
+
+    setTimeout(function(){
+
+        element.style.display = "none";
+
+    },3000);
+
+}
+
+
+// =================================
+// LOGOUT
+// =================================
+
+function logout(){
+
+    document.getElementById("loginId").value = "";
+
+    document.getElementById("loginPassword").value = "";
+
+    showScreen("employeeLoginScreen");
+
+}
+
+</script>
+
+</body>
+</html>
