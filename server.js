@@ -1,7 +1,7 @@
+const path = require('path');
 require('dotenv').config();
 
 const crypto = require('crypto');
-const path = require('path');
 const fs = require('fs');
 const express = require('express');
 const mongoose = require('mongoose');
@@ -10,6 +10,11 @@ const jwt = require('jsonwebtoken');
 const multer = require('multer');
 
 const app = express();
+app.use(express.static(path.join(__dirname)));
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
 const PORT = Number(process.env.PORT || 3000);
 const isProduction = process.env.NODE_ENV === 'production';
 const JWT_SECRET = process.env.JWT_SECRET || (isProduction ? '' : 'local-development-only-change-me');
@@ -49,9 +54,12 @@ function rateLimit({ windowMs, max }) {
   };
 }
 const authRateLimit = rateLimit({ windowMs: 10 * 60 * 1000, max: 20 });
-app.use((req, res, next) => {
-  if (req.path.startsWith('/uploads/')) return res.sendStatus(404);
-  express.static(__dirname, { dotfiles: 'deny', index: false })(req, res, next);
+app.use(express.static(path.join(__dirname), { dotfiles: 'deny' }));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api/') || req.path.startsWith('/uploads/')) return next();
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 const employeeSchema = new mongoose.Schema({
@@ -289,11 +297,10 @@ app.post('/api/auth/employee-login', authRateLimit, async (req, res, next) => {
   } catch (error) { next(error); }
 });
 
-app.post('/api/auth/admin-login', authRateLimit, (req, res) => {
-  if (req.body.adminId !== ADMIN_ID || req.body.password !== ADMIN_PASSWORD) return res.status(401).json({ message: 'Invalid admin ID or password.' });
+app.post('/api/auth/admin-login', authRateLimit, async (req, res) => {
+  if (req.body.adminId !== ADMIN_ID || !(await bcrypt.compare(String(req.body.password || ''), ADMIN_PASSWORD))) return res.status(401).json({ message: 'Invalid admin ID or password.' });
   res.json({ token: jwt.sign({ role: 'admin' }, JWT_SECRET, { expiresIn: '8h', issuer: 'deeya-invest', audience: 'deeya-invest-ui' }) });
 });
-
 app.get('/api/admin/employees', requireAuth, requireAdmin, async (req, res, next) => {
   try { res.json((await Employee.find().sort({ createdAt: -1 })).map(publicEmployee)); } catch (error) { next(error); }
 });
